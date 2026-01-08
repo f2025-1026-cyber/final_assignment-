@@ -1,0 +1,77 @@
+#include <iostream>
+#include <vector>
+#include <fstream>
+using namespace std;
+struct Employee
+{
+    int ID;
+    string employee_name;
+    double monthlysalary;
+};
+double yearly_salary(double monthlysalary)
+{
+    return monthlysalary * 12;
+}
+int main()
+{
+    vector<Employee> employee_list;
+    int total_employee;
+    double salary_limit;
+
+    for (int i = 0; i < total_employee; i++)
+    {
+        Employee New_reg;
+        cout << "Enter the ID of NEw registration" << endl;
+        cin >> New_reg.ID;
+        cin.ignore();
+        cout << "Enter the nameof new employee" << endl;
+        cin >> New_reg.employee_name;
+        getline(cin, New_reg.employee_name);
+        cout << "Enter the salary of new employee " << endl;
+        cin >> New_reg.monthlysalary;
+        employee_list.push_back(New_reg);
+    }
+    cout << "enter the thresh hold salary" << endl;
+    cin >> salary_limit;
+    ofstream salaryData("high_salary.txt");
+    if (!salaryData)
+    {
+        cout << "Error: File could not be opened for writing." << endl;
+        return 1;
+    }
+
+    for (const Employee& employee : employee_list)
+    {
+        double yearlySalary = yearly_salary(employee.monthlysalary);
+
+        if (yearlySalary > salary_limit)
+        {
+            salaryData << employee.ID << endl;
+            salaryData << employee.employee_name << endl;
+            salaryData << yearlySalary << endl;
+            salaryData << "-----" << endl;
+        }
+    }
+
+    salaryData.close();
+
+    ifstream inputFile("high_salary.txt");
+
+    if (!inputFile)
+    {
+        cout << "Error: File could not be opened for reading." << endl;
+        return 1;
+    }
+
+    cout << "\nEmployees with High Yearly Salary:\n";
+
+    string fileLine;
+    while (getline(inputFile, fileLine))
+    {
+        cout << fileLine << endl;
+    }
+
+    inputFile.close();
+
+    return 0;
+}

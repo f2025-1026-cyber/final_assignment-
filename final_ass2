@@ -1,0 +1,96 @@
+#include <iostream>
+#include <vector>
+#include <fstream>
+using namespace std;
+
+struct Order
+{
+    int orderID;
+    string customerName;
+    int numberOfItems;
+    double pricePerItem;
+};
+
+double calculateTotalAmount(int itemCount, double itemPrice)
+{
+    return itemCount * itemPrice;
+}
+
+int main()
+{
+    vector<Order> orderList;
+    int totalOrders;
+
+    cout << "Enter total number of orders: ";
+    cin >> totalOrders;
+
+    for (int index = 0; index < totalOrders; index++)
+    {
+        Order newOrder;
+
+        cout << "\nEnter Order ID: ";
+        cin >> newOrder.orderID;
+
+        cin.ignore();
+        cout << "Enter Customer Name: ";
+        getline(cin, newOrder.customerName);
+
+        cout << "Enter Number of Items: ";
+        cin >> newOrder.numberOfItems;
+
+        cout << "Enter Price per Item: ";
+        cin >> newOrder.pricePerItem;
+
+        if (newOrder.numberOfItems <= 0 || newOrder.pricePerItem <= 0)
+        {
+            cout << "Invalid input. Please enter positive values." << endl;
+            index--;
+            continue;
+        }
+
+        orderList.push_back(newOrder);
+    }
+
+    ofstream outputFile("priority_orders.txt");
+
+    if (!outputFile)
+    {
+        cout << "Error: File could not be opened for writing." << endl;
+        return 1;
+    }
+
+    for (const Order& order : orderList)
+    {
+        double totalBill = calculateTotalAmount(order.numberOfItems, order.pricePerItem);
+
+        if (totalBill > 5000)
+        {
+            outputFile << order.orderID << endl;
+            outputFile << order.customerName << endl;
+            outputFile << totalBill << endl;
+            outputFile << "-----" << endl;
+        }
+    }
+
+    outputFile.close();
+
+    ifstream inputFile("priority_orders.txt");
+
+    if (!inputFile)
+    {
+        cout << "Error: File could not be opened for reading." << endl;
+        return 1;
+    }
+
+    cout << "\nPriority Orders (Total > 5000):\n";
+
+    string fileLine;
+    while (getline(inputFile, fileLine))
+    {
+        cout << fileLine << endl;
+    }
+
+    inputFile.close();
+
+    return 0;
+}
